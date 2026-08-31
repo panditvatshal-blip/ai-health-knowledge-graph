@@ -180,49 +180,123 @@ def build_large_health_graph():
             "TREATED_BY"
         ),
 
-        (
-            "Dengue Fever",
-            "Avoid Aspirin & Ibuprofen Unless Advised by a Doctor",
-            "PRECAUTION"
-        ),
+      if diseases:
 
-        (
-            "Dengue Fever",
-            "Adequate Fluids & Nutritious Foods",
-            "RECOMMENDED_DIET"
-        ),
+    st.success("🎯 Knowledge Graph Traversal Completed!")
 
+    # ---------------------------------------------------------
+    # 1. POSSIBLE DISEASE
+    # ---------------------------------------------------------
 
-        # =====================================================
-        # MIGRAINE
-        # =====================================================
+    diseases_str = " | ".join(diseases)
 
-        ("severe headache", "Migraine", "IS_SYMPTOM_OF"),
-        ("light sensitivity", "Migraine", "IS_SYMPTOM_OF"),
+    st.markdown(
+        f"### 🔴 संभावित बीमारी: `{diseases_str}`"
+    )
 
-        (
-            "Migraine",
-            "Rest in a Dark Quiet Room & Maintain Hydration",
-            "TREATED_BY"
-        ),
+    if symptoms:
+        st.write(
+            f"**Identified Symptom Node(s):** "
+            f"`{', '.join(symptoms).title()}`"
+        )
 
-        (
-            "Migraine",
-            "Avoid Loud Noises, Bright Screens & Skipping Meals",
-            "PRECAUTION"
-        ),
-
-        (
-            "Migraine",
-            "Balanced Meals & Magnesium-Rich Foods",
-            "RECOMMENDED_DIET"
-        ),
+    st.write("---")
 
 
-        # =====================================================
-        # DIABETES
-        # =====================================================
+    # =========================================================
+    # 2. 🟢 WHAT TO DO
+    # =========================================================
 
+    st.markdown("### 🟢 क्या करें / What To Do")
+
+    if treatments:
+
+        for treatment in treatments:
+            # Remove graph annotation if present
+            clean_treatment = treatment.replace(
+                "<i>", ""
+            ).replace(
+                "</i>", ""
+            )
+
+            st.success(
+                f"✅ {clean_treatment}"
+            )
+
+    else:
+
+        st.info(
+            "इस बीमारी के लिए treatment information "
+            "Knowledge Graph में उपलब्ध नहीं है।"
+        )
+
+
+    # =========================================================
+    # 3. 🚫 WHAT NOT TO DO
+    # =========================================================
+
+    st.markdown("### 🚫 क्या न करें / What To Avoid")
+
+    if precautions:
+
+        for precaution in precautions:
+
+            clean_precaution = precaution.replace(
+                "<i>", ""
+            ).replace(
+                "</i>", ""
+            )
+
+            st.error(
+                f"❌ {clean_precaution}"
+            )
+
+    else:
+
+        st.info(
+            "इस बीमारी के लिए precaution information "
+            "Knowledge Graph में उपलब्ध नहीं है।"
+        )
+
+
+    # =========================================================
+    # 4. 🥗 DIETARY ADVICE
+    # =========================================================
+
+    st.markdown("### 🥗 खान-पान की सलाह / Dietary Advice")
+
+    if diets:
+
+        for diet in diets:
+
+            clean_diet = diet.replace(
+                "<i>", ""
+            ).replace(
+                "</i>", ""
+            )
+
+            st.info(
+                f"🥗 {clean_diet}"
+            )
+
+    else:
+
+        st.info(
+            "इस बीमारी के लिए dietary information "
+            "Knowledge Graph में उपलब्ध नहीं है।"
+        )
+
+
+    # =========================================================
+    # 5. ⚠️ MEDICAL NOTE
+    # =========================================================
+
+    st.warning(
+        "⚠️ **कब डॉक्टर से संपर्क करें?**\n\n"
+        "अगर लक्षण बहुत गंभीर हों, तेजी से बिगड़ रहे हों, "
+        "लगातार बने रहें, या आपको अपनी स्थिति को लेकर चिंता हो, "
+        "तो qualified doctor/health professional से medical evaluation लें।"
+    )
         ("high blood sugar", "Diabetes", "IS_SYMPTOM_OF"),
         ("frequent urination", "Diabetes", "IS_SYMPTOM_OF"),
 
