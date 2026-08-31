@@ -49,18 +49,45 @@ Unlike probabilistic AI/LLMs that can suffer from hallucinations, this applicati
 +-----------------------------------+
 
 ---
+## 🧠 Knowledge Graph & 📐 Schema
 
-## 🧬 Knowledge Graph Ontology Schema
+### Knowledge Graph
+A **knowledge graph** represents information as a network of **nodes (entities)** and **edges (relationships)**.  
+For example:
+- **Node:** Diabetes  
+- **Node:** Insulin  
+- **Edge:** treated_by  
 
-| Source Node (Entity A) | Semantic Edge (Relationship) | Target Node (Entity B) | Clinical Context |
-| :--- | :--- | :--- | :--- |
-| **Severe Headache** | `IS_SYMPTOM_OF` | **Migraine** | Symptom-to-Pathology mapping |
-| **High Fever** | `IS_SYMPTOM_OF` | **Dengue** | Pathological association |
-| **Dengue** | `TREATED_BY` | **Hydration & Paracetamol** | Therapeutic strategy |
-| **Dengue** | `PRECAUTION` | **Avoid Aspirin** | Critical safety warning |
-| **Diabetes** | `RECOMMENDED_DIET` | **Low Carb Diet** | Nutritional advice |
+This allows users to explore how diseases, symptoms, and treatments are connected.
 
 ---
+
+### Schema
+A **schema** defines the blueprint of the graph — what types of nodes and relationships are allowed.  
+
+**Entity Types (Nodes):**
+- Disease  
+- Symptom  
+- Treatment  
+- Drug  
+
+**Relationship Types (Edges):**
+- `has_symptom` (Disease → Symptom)  
+- `treated_by` (Disease → Treatment/Drug)  
+- `side_effect` (Drug → Symptom)  
+
+---
+
+### Example Schema (JSON)
+```json
+{
+  "entities": ["Disease", "Symptom", "Treatment", "Drug"],
+  "relationships": {
+    "has_symptom": ["Disease", "Symptom"],
+    "treated_by": ["Disease", "Treatment"],
+    "side_effect": ["Drug", "Symptom"]
+  }
+}
 
 ## 🛠️ Tech Stack & Dependencies
 
