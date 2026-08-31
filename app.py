@@ -12,7 +12,7 @@ st.set_page_config(
     page_icon="🩺"
 )
 
-# Custom CSS
+# Custom CSS for HTML Cards
 st.markdown("""
 <style>
 
@@ -27,7 +27,6 @@ st.markdown("""
     color: #4B5563;
 }
 
-/* WHAT TO DO */
 .box-treatment {
     background-color: #D1FAE5;
     border-left: 6px solid #10B981;
@@ -37,7 +36,6 @@ st.markdown("""
     color: #065F46;
 }
 
-/* WHAT NOT TO DO */
 .box-avoid {
     background-color: #FEE2E2;
     border-left: 6px solid #EF4444;
@@ -47,7 +45,6 @@ st.markdown("""
     color: #991B1B;
 }
 
-/* DIET */
 .box-diet {
     background-color: #DBEAFE;
     border-left: 6px solid #3B82F6;
@@ -57,7 +54,6 @@ st.markdown("""
     color: #1E40AF;
 }
 
-/* WHEN TO SEE DOCTOR */
 .box-doctor {
     background-color: #FEF3C7;
     border-left: 6px solid #F59E0B;
@@ -95,7 +91,7 @@ st.write("---")
 
 
 # -------------------------------------------------------------
-# 3. KNOWLEDGE GRAPH DATASET
+# 3. COMPLETE KNOWLEDGE GRAPH DATASET
 # -------------------------------------------------------------
 
 @st.cache_resource
@@ -105,136 +101,171 @@ def build_large_health_graph():
 
     medical_data = [
 
-        # =====================================================
-        # STOMACH PAIN / ACIDITY / GASTRITIS
-        # =====================================================
+        # -----------------------------------------------------
+        # Stomach Pain / Acidity / Food Poisoning
+        # -----------------------------------------------------
 
         ("stomach pain", "Acidity & Gastritis", "IS_SYMPTOM_OF"),
         ("heartburn", "Acidity & Gastritis", "IS_SYMPTOM_OF"),
         ("acidity", "Acidity & Gastritis", "IS_SYMPTOM_OF"),
 
-        ("Acidity & Gastritis",
-         "Antacids, ENO & Warm Water",
-         "TREATED_BY"),
+        (
+            "Acidity & Gastritis",
+            "Antacids, ENO & Warm Water",
+            "TREATED_BY"
+        ),
 
-        ("Acidity & Gastritis",
-         "Avoid Spicy Food, Tea, Coffee & Carbonated Drinks",
-         "PRECAUTION"),
+        (
+            "Acidity & Gastritis",
+            "Avoid Spicy Food, Tea, Coffee & Carbonated Drinks",
+            "PRECAUTION"
+        ),
 
-        ("Acidity & Gastritis",
-         "Avoid Sleeping Immediately After Eating",
-         "PRECAUTION"),
+        (
+            "Acidity & Gastritis",
+            "Avoid Sleeping Immediately After Eating",
+            "PRECAUTION"
+        ),
 
-        ("Acidity & Gastritis",
-         "Cold Milk & High-Fiber Foods",
-         "RECOMMENDED_DIET"),
-
-
-        # =====================================================
-        # FOOD POISONING
-        # =====================================================
+        (
+            "Acidity & Gastritis",
+            "Cold Milk & High-Fiber Foods",
+            "RECOMMENDED_DIET"
+        ),
 
         ("stomach pain", "Food Poisoning", "IS_SYMPTOM_OF"),
         ("vomiting", "Food Poisoning", "IS_SYMPTOM_OF"),
 
-        ("Food Poisoning",
-         "ORS Solution & Oral Hydration",
-         "TREATED_BY"),
+        (
+            "Food Poisoning",
+            "ORS Solution & Oral Hydration",
+            "TREATED_BY"
+        ),
 
-        ("Food Poisoning",
-         "Avoid Outside / Heavy / Dairy / Oily Food",
-         "PRECAUTION"),
+        (
+            "Food Poisoning",
+            "Avoid Outside / Heavy / Dairy / Oily Food",
+            "PRECAUTION"
+        ),
 
-        ("Food Poisoning",
-         "Avoid Antibiotics Without Doctor Prescription",
-         "PRECAUTION"),
+        (
+            "Food Poisoning",
+            "Avoid Antibiotics Without Doctor Prescription",
+            "PRECAUTION"
+        ),
 
-        ("Food Poisoning",
-         "BRAT Diet (Bananas, Rice, Applesauce, Toast)",
-         "RECOMMENDED_DIET"),
+        (
+            "Food Poisoning",
+            "BRAT Diet (Bananas, Rice, Applesauce, Toast)",
+            "RECOMMENDED_DIET"
+        ),
 
 
-        # =====================================================
-        # DENGUE FEVER
-        # =====================================================
+        # -----------------------------------------------------
+        # Dengue Fever
+        # -----------------------------------------------------
 
         ("high fever", "Dengue Fever", "IS_SYMPTOM_OF"),
         ("joint pain", "Dengue Fever", "IS_SYMPTOM_OF"),
 
-        ("Dengue Fever",
-         "Adequate Hydration & Medical Evaluation",
-         "TREATED_BY"),
+        (
+            "Dengue Fever",
+            "Hydration & Paracetamol",
+            "TREATED_BY"
+        ),
 
-        ("Dengue Fever",
-         "Avoid Aspirin & Ibuprofen Unless a Doctor Advises Otherwise",
-         "PRECAUTION"),
+        (
+            "Dengue Fever",
+            "AVOID ASPIRIN & IBUPROFEN (Causes Internal Bleeding)",
+            "PRECAUTION"
+        ),
 
-        ("Dengue Fever",
-         "Hydrating Fluids & Nutritious Foods",
-         "RECOMMENDED_DIET"),
+        (
+            "Dengue Fever",
+            "Papaya Leaf Extract & Coconut Water",
+            "RECOMMENDED_DIET"
+        ),
 
 
-        # =====================================================
-        # MIGRAINE
-        # =====================================================
+        # -----------------------------------------------------
+        # Migraine
+        # -----------------------------------------------------
 
         ("severe headache", "Migraine", "IS_SYMPTOM_OF"),
         ("light sensitivity", "Migraine", "IS_SYMPTOM_OF"),
 
-        ("Migraine",
-         "Rest in a Dark Quiet Room & Maintain Hydration",
-         "TREATED_BY"),
+        (
+            "Migraine",
+            "Dark Room Rest & Adequate Hydration",
+            "TREATED_BY"
+        ),
 
-        ("Migraine",
-         "Avoid Loud Noises, Bright Screens & Skipping Meals",
-         "PRECAUTION"),
+        (
+            "Migraine",
+            "Avoid Loud Noises, Bright Screens & Skip Meals",
+            "PRECAUTION"
+        ),
 
-        ("Migraine",
-         "Balanced Meals & Magnesium-Rich Foods",
-         "RECOMMENDED_DIET"),
+        (
+            "Migraine",
+            "Magnesium-Rich Foods & Herbal Tea",
+            "RECOMMENDED_DIET"
+        ),
 
 
-        # =====================================================
-        # DIABETES
-        # =====================================================
+        # -----------------------------------------------------
+        # Diabetes
+        # -----------------------------------------------------
 
         ("high blood sugar", "Diabetes", "IS_SYMPTOM_OF"),
         ("frequent urination", "Diabetes", "IS_SYMPTOM_OF"),
 
-        ("Diabetes",
-         "Follow Doctor-Prescribed Medication & Blood Sugar Monitoring",
-         "TREATED_BY"),
+        (
+            "Diabetes",
+            "Insulin & Doctor Prescribed Medication",
+            "TREATED_BY"
+        ),
 
-        ("Diabetes",
-         "Avoid Excess Sugar, Sweet Beverages & Refined Sweets",
-         "PRECAUTION"),
+        (
+            "Diabetes",
+            "Avoid Sugar, Sweet Beverages & Refined Sweets",
+            "PRECAUTION"
+        ),
 
-        ("Diabetes",
-         "Low Glycemic Index & High Fiber Diet",
-         "RECOMMENDED_DIET"),
+        (
+            "Diabetes",
+            "Low Glycemic Index & High Fiber Diet",
+            "RECOMMENDED_DIET"
+        ),
 
 
-        # =====================================================
-        # COMMON COLD
-        # =====================================================
+        # -----------------------------------------------------
+        # Common Cold
+        # -----------------------------------------------------
 
         ("runny nose", "Common Cold", "IS_SYMPTOM_OF"),
         ("sneezing", "Common Cold", "IS_SYMPTOM_OF"),
 
-        ("Common Cold",
-         "Rest, Warm Fluids & Symptom-Appropriate Supportive Care",
-         "TREATED_BY"),
+        (
+            "Common Cold",
+            "Steam Inhalation & Warm Salt Water Gargle",
+            "TREATED_BY"
+        ),
 
-        ("Common Cold",
-         "Avoid Smoke, Irritants & Anything That Worsens Symptoms",
-         "PRECAUTION"),
+        (
+            "Common Cold",
+            "Avoid Cold Drinks, Ice Creams & Chilled Items",
+            "PRECAUTION"
+        ),
 
-        ("Common Cold",
-         "Warm Soup, Fruits & Adequate Fluids",
-         "RECOMMENDED_DIET"),
+        (
+            "Common Cold",
+            "Hot Soup & Vitamin-C Rich Citrus Fruits",
+            "RECOMMENDED_DIET"
+        )
     ]
 
-    # Add graph edges
+    # Add all graph edges
     for u, v, rel in medical_data:
         G.add_edge(
             u.lower(),
@@ -260,98 +291,89 @@ def analyze_symptoms(user_input):
     matched_diseases = set()
 
     # ---------------------------------------------------------
-    # A. MATCH SYMPTOMS
+    # 1. Match Symptoms
     # ---------------------------------------------------------
 
     for node in G.nodes():
 
-        if not isinstance(node, str):
-            continue
+        if isinstance(node, str) and node in user_input_clean:
 
-        node_lower = node.lower()
+            # Check whether node is a symptom node
+            neighbors = list(G.neighbors(node))
 
-        # Match symptom nodes
-        if node_lower in user_input_clean:
+            for n in neighbors:
 
-            # Check whether node is a symptom
-            for neighbor in G.neighbors(node):
+                rel = G[node][n]["relationship"]
 
-                relationship = G[node][neighbor]["relationship"]
-
-                if relationship == "IS_SYMPTOM_OF":
+                if rel == "IS_SYMPTOM_OF":
 
                     matched_symptoms.append(node)
-                    matched_diseases.add(neighbor)
-
-    # ---------------------------------------------------------
-    # B. DIRECT DISEASE NAME MATCH
-    # ---------------------------------------------------------
-
-    for node in G.nodes():
-
-        if not isinstance(node, str):
-            continue
-
-        # Only consider disease nodes
-        disease_has_symptom = False
-
-        for neighbor in G.predecessors(node):
-
-            if G[neighbor][node]["relationship"] == "IS_SYMPTOM_OF":
-                disease_has_symptom = True
-                break
-
-        if disease_has_symptom:
-
-            if node.lower() in user_input_clean:
-                matched_diseases.add(node)
+                    matched_diseases.add(n)
 
     # Remove duplicate symptoms
     matched_symptoms = list(dict.fromkeys(matched_symptoms))
 
     # ---------------------------------------------------------
-    # C. TRAVERSE DISEASE NODES
+    # 2. Direct Disease Name Match
     # ---------------------------------------------------------
 
-    all_treatments = []
-    all_precautions = []
-    all_diets = []
+    disease_names = [
+        "Acidity & Gastritis",
+        "Food Poisoning",
+        "Dengue Fever",
+        "Migraine",
+        "Diabetes",
+        "Common Cold"
+    ]
 
-    for disease in matched_diseases:
+    for disease in disease_names:
 
-        for neighbor in G.neighbors(disease):
+        if disease.lower() in user_input_clean:
+            matched_diseases.add(disease)
 
-            relationship = G[disease][neighbor]["relationship"]
+    # ---------------------------------------------------------
+    # 3. Traverse Graph Edges
+    # ---------------------------------------------------------
 
-            if relationship == "TREATED_BY":
+    all_treatments = set()
+    all_precautions = set()
+    all_diets = set()
 
-                all_treatments.append(
-                    f"{neighbor} <i>(for {disease})</i>"
+    for dis in matched_diseases:
+
+        for n in G.neighbors(dis):
+
+            rel = G[dis][n]["relationship"]
+
+            if rel == "TREATED_BY":
+
+                all_treatments.add(
+                    f"{n} <i>(for {dis})</i>"
                 )
 
-            elif relationship == "PRECAUTION":
+            elif rel == "PRECAUTION":
 
-                all_precautions.append(
-                    f"{neighbor} <i>(for {disease})</i>"
+                all_precautions.add(
+                    f"{n} <i>(for {dis})</i>"
                 )
 
-            elif relationship == "RECOMMENDED_DIET":
+            elif rel == "RECOMMENDED_DIET":
 
-                all_diets.append(
-                    f"{neighbor} <i>(for {disease})</i>"
+                all_diets.add(
+                    f"{n} <i>(for {dis})</i>"
                 )
 
     return (
         matched_symptoms,
         list(matched_diseases),
-        all_treatments,
-        all_precautions,
-        all_diets
+        list(all_treatments),
+        list(all_precautions),
+        list(all_diets)
     )
 
 
 # -------------------------------------------------------------
-# 5. USER INTERFACE
+# 5. USER INTERFACE LAYOUT
 # -------------------------------------------------------------
 
 col1, col2 = st.columns([1.1, 0.9])
@@ -363,7 +385,9 @@ col1, col2 = st.columns([1.1, 0.9])
 
 with col1:
 
-    st.subheader("🔍 Enter Symptoms / स्वास्थ्य लक्षण लिखें")
+    st.subheader(
+        "🔍 Enter Symptoms / स्वास्थ्य लक्षण लिखें"
+    )
 
     preset = st.selectbox(
         "⚡ क्विक टेस्ट हेतु लक्षण सेलेक्ट करें (या खुद टाइप करें):",
@@ -373,14 +397,7 @@ with col1:
             "stomach pain and acidity",
             "severe headache with light sensitivity",
             "high fever and joint pain",
-            "high blood sugar and frequent urination",
-            "vomiting and stomach pain",
-            "common cold with runny nose",
-            "Dengue Fever",
-            "Migraine",
-            "Diabetes",
-            "Food Poisoning",
-            "Acidity & Gastritis"
+            "high blood sugar and frequent urination"
         ]
     )
 
@@ -391,10 +408,11 @@ with col1:
     )
 
     user_query = st.text_area(
-        "यहाँ अपने लक्षण या बीमारी का नाम लिखें:",
+        "यहाँ अपने लक्षण लिखें (e.g., I have stomach pain and heartburn):",
         value=default_text,
         height=100
     )
+
 
     # ---------------------------------------------------------
     # ANALYZE BUTTON
@@ -408,7 +426,7 @@ with col1:
         if not user_query.strip():
 
             st.warning(
-                "कृपया पहले कोई लक्षण या बीमारी का नाम टाइप करें!"
+                "कृपया पहले कोई लक्षण टाइप करें!"
             )
 
         else:
@@ -425,6 +443,7 @@ with col1:
                     diets
                 ) = analyze_symptoms(user_query)
 
+
             # -------------------------------------------------
             # DISEASE FOUND
             # -------------------------------------------------
@@ -434,6 +453,7 @@ with col1:
                 st.success(
                     "🎯 Knowledge Graph Traversal Completed!"
                 )
+
 
                 # ---------------------------------------------
                 # POSSIBLE DISEASE
@@ -463,7 +483,7 @@ with col1:
 
                     t_html = "".join(
                         [
-                            f"<li style='margin-bottom:8px;'>{t}</li>"
+                            f"<li style='margin-bottom: 7px;'>{t}</li>"
                             for t in treatments
                         ]
                     )
@@ -473,10 +493,10 @@ with col1:
                         <div class="box-treatment">
 
                             <div class="box-title">
-                                🟢 क्या करें / What To Do
+                                🟢 क्या करें / क्या मदद मिल सकती है
                             </div>
 
-                            <ul style="margin-bottom:0px;">
+                            <ul style="margin-bottom: 0;">
                                 {t_html}
                             </ul>
 
@@ -494,7 +514,7 @@ with col1:
 
                     p_html = "".join(
                         [
-                            f"<li style='margin-bottom:8px;'>{p}</li>"
+                            f"<li style='margin-bottom: 7px;'>{p}</li>"
                             for p in precautions
                         ]
                     )
@@ -507,7 +527,7 @@ with col1:
                                 🚫 क्या न करें / What To Avoid
                             </div>
 
-                            <ul style="margin-bottom:0px;">
+                            <ul style="margin-bottom: 0;">
                                 {p_html}
                             </ul>
 
@@ -518,14 +538,14 @@ with col1:
 
 
                 # =================================================
-                # 🔵 DIET
+                # 🔵 DIETARY ADVICE
                 # =================================================
 
                 if diets:
 
                     d_html = "".join(
                         [
-                            f"<li style='margin-bottom:8px;'>{d}</li>"
+                            f"<li style='margin-bottom: 7px;'>{d}</li>"
                             for d in diets
                         ]
                     )
@@ -538,7 +558,7 @@ with col1:
                                 🥗 खान-पान की सलाह / Dietary Advice
                             </div>
 
-                            <ul style="margin-bottom:0px;">
+                            <ul style="margin-bottom: 0;">
                                 {d_html}
                             </ul>
 
@@ -549,7 +569,7 @@ with col1:
 
 
                 # =================================================
-                # ⚠️ MEDICAL NOTE
+                # ⚠️ WHEN TO SEEK MEDICAL HELP
                 # =================================================
 
                 st.markdown(
@@ -560,9 +580,11 @@ with col1:
                             ⚠️ कब डॉक्टर से संपर्क करें?
                         </div>
 
-                        अगर लक्षण बहुत गंभीर हों, तेजी से बिगड़ रहे हों,
-                        लगातार बने रहें, या आपको अपनी स्थिति को लेकर चिंता हो,
-                        तो qualified doctor/health professional से medical evaluation लें।
+                        <div>
+                            अगर लक्षण बहुत गंभीर हों, तेजी से बिगड़ रहे हों,
+                            लगातार बने रहें, या आपको अपनी स्थिति को लेकर चिंता हो,
+                            तो qualified doctor/health professional से medical evaluation लें।
+                        </div>
 
                     </div>
                     """,
@@ -578,20 +600,21 @@ with col1:
 
                 st.error(
                     "❌ कोई बीमारी मैच नहीं हुई। "
-                    "कृपया लक्षण जैसे "
+                    "कृपया लक्षण (जैसे: "
                     "`stomach pain`, `headache`, `fever`, "
-                    "`acidity`, `vomiting` आदि जाँचकर दोबारा टाइप करें।"
+                    "`acidity`, `vomiting`) जाँचकर दोबारा टाइप करें।"
                 )
 
+
             # -------------------------------------------------
-            # DISCLAIMER
+            # MEDICAL DISCLAIMER
             # -------------------------------------------------
 
             st.warning(
                 "⚠️ **Medical Disclaimer:** "
                 "This system provides structured informational outputs "
-                "from a Knowledge Graph and is not a substitute for "
-                "professional medical diagnosis or treatment."
+                "from a Knowledge Graph. Consult a qualified medical "
+                "practitioner for formal clinical evaluation."
             )
 
 
@@ -616,8 +639,9 @@ with col2:
         seed=42
     )
 
+
     # ---------------------------------------------------------
-    # EDGES
+    # Draw Edges
     # ---------------------------------------------------------
 
     nx.draw_networkx_edges(
@@ -630,8 +654,9 @@ with col2:
         ax=ax
     )
 
+
     # ---------------------------------------------------------
-    # NODES
+    # Draw Nodes
     # ---------------------------------------------------------
 
     nx.draw_networkx_nodes(
@@ -643,8 +668,9 @@ with col2:
         ax=ax
     )
 
+
     # ---------------------------------------------------------
-    # LABELS
+    # Labels
     # ---------------------------------------------------------
 
     labels = {
@@ -670,6 +696,7 @@ with col2:
                 alpha=0.75
             )
         )
+
 
     plt.axis("off")
 
