@@ -1,7 +1,6 @@
 import streamlit as st
 import networkx as nx
 import matplotlib.pyplot as plt
-import pandas as pd
 
 # -------------------------------------------------------------
 # 1. PAGE CONFIG & STYLING
@@ -20,57 +19,51 @@ st.markdown('<div class="sub-header">GraphRAG & Topological Graph Traversal Syst
 st.write("---")
 
 # -------------------------------------------------------------
-# 2. LARGE-SCALE KNOWLEDGE GRAPH BUILDER
+# 2. KNOWLEDGE GRAPH BUILDER (All Symptoms, Diseases & Precautions)
 # -------------------------------------------------------------
 @st.cache_resource
 def build_large_health_graph():
     G = nx.DiGraph()
     
-    # 🌟 लाखों डेटा जोड़ने के लिए (Large Dataset Structure)
-    # आप चाहें तो pd.read_csv("medical_knowledge_base.csv") से भी लोड कर सकते हैं
+    # बीमारियों, लक्षणों, इलाजों और सावधानियों का पूरा नेटवर्क
     medical_data = [
-        # Stomach & Digestion Problems
-        ("stomach pain", "Acidity", "IS_SYMPTOM_OF"),
-        ("stomach pain", "Gastritis", "IS_SYMPTOM_OF"),
+        # 1. Stomach Pain / Acidity / Food Poisoning
         ("stomach pain", "Food Poisoning", "IS_SYMPTOM_OF"),
-        ("abdominal cramps", "Food Poisoning", "IS_SYMPTOM_OF"),
         ("vomiting", "Food Poisoning", "IS_SYMPTOM_OF"),
-        ("heartburn", "Acidity", "IS_SYMPTOM_OF"),
-        ("Acidity", "Antacids & Warm Water", "TREATED_BY"),
-        ("Acidity", "Avoid Spicy Food", "PRECAUTION"),
-        ("Food Poisoning", "ORS & Hydration", "TREATED_BY"),
-        ("Food Poisoning", "Avoid Outside Food", "PRECAUTION"),
-        ("Gastritis", "Bland Diet & Probiotics", "RECOMMENDED_DIET"),
+        ("Food Poisoning", "ORS & Oral Rehydration Solution", "TREATED_BY"),
+        ("Food Poisoning", "Avoid Outside / Heavy / Dairy Food", "PRECAUTION"),
+        ("Food Poisoning", "Avoid Self-Medication with Antibiotics", "PRECAUTION"),
 
-        # Migraine & Headaches
-        ("severe headache", "Migraine", "IS_SYMPTOM_OF"),
-        ("headache", "Migraine", "IS_SYMPTOM_OF"),
-        ("light sensitivity", "Migraine", "IS_SYMPTOM_OF"),
-        ("nausea", "Migraine", "IS_SYMPTOM_OF"),
-        ("Migraine", "Dark Room Rest & Painkillers", "TREATED_BY"),
-        ("Migraine", "Avoid Loud Noise & Bright Lights", "PRECAUTION"),
+        ("stomach pain", "Acidity / Gastritis", "IS_SYMPTOM_OF"),
+        ("heartburn", "Acidity / Gastritis", "IS_SYMPTOM_OF"),
+        ("Acidity / Gastritis", "Antacids & Warm Water", "TREATED_BY"),
+        ("Acidity / Gastritis", "Avoid Spicy Food, Tea & Coffee", "PRECAUTION"),
+        ("Acidity / Gastritis", "Avoid Sleeping Immediately After Meals", "PRECAUTION"),
 
-        # Dengue & Viral Infections
+        # 2. Dengue
         ("high fever", "Dengue", "IS_SYMPTOM_OF"),
-        ("fever", "Dengue", "IS_SYMPTOM_OF"),
         ("joint pain", "Dengue", "IS_SYMPTOM_OF"),
-        ("body pain", "Dengue", "IS_SYMPTOM_OF"),
         ("Dengue", "Hydration & Paracetamol", "TREATED_BY"),
-        ("Dengue", "Avoid Aspirin & Ibuprofen", "PRECAUTION"),
+        ("Dengue", "AVOID ASPIRIN & IBUPROFEN (Increases Bleeding Risk)", "PRECAUTION"),
 
-        # Diabetes & Metabolism
+        # 3. Migraine
+        ("severe headache", "Migraine", "IS_SYMPTOM_OF"),
+        ("light sensitivity", "Migraine", "IS_SYMPTOM_OF"),
+        ("Migraine", "Dark Room Rest & Hydration", "TREATED_BY"),
+        ("Migraine", "Avoid Bright Lights, Loud Noise & Screen Time", "PRECAUTION"),
+
+        # 4. Diabetes
         ("high blood sugar", "Diabetes", "IS_SYMPTOM_OF"),
         ("frequent urination", "Diabetes", "IS_SYMPTOM_OF"),
-        ("excessive thirst", "Diabetes", "IS_SYMPTOM_OF"),
-        ("Diabetes", "Low Carb Diet & Exercise", "RECOMMENDED_DIET"),
-        ("Diabetes", "Insulin / Metformin", "TREATED_BY"),
+        ("Diabetes", "Insulin / Doctor Prescribed Medicine", "TREATED_BY"),
+        ("Diabetes", "Avoid Sugar, Sweet Drinks & Refined Carbs", "PRECAUTION"),
+        ("Diabetes", "Low Carb High Fiber Diet", "RECOMMENDED_DIET"),
 
-        # Common Cold & Respiratory
+        # 5. Common Cold
         ("runny nose", "Common Cold", "IS_SYMPTOM_OF"),
         ("sneezing", "Common Cold", "IS_SYMPTOM_OF"),
-        ("cough", "Common Cold", "IS_SYMPTOM_OF"),
-        ("sore throat", "Common Cold", "IS_SYMPTOM_OF"),
-        ("Common Cold", "Steam Inhalation & Salt Gargle", "TREATED_BY")
+        ("Common Cold", "Steam Inhalation & Salt Water Gargle", "TREATED_BY"),
+        ("Common Cold", "Avoid Cold Drinks & Chilled Items", "PRECAUTION")
     ]
     
     for u, v, rel in medical_data:
@@ -81,13 +74,12 @@ def build_large_health_graph():
 G = build_large_health_graph()
 
 # -------------------------------------------------------------
-# 3. GRAPH RETRIEVAL ENGINE (GraphRAG Logic)
+# 3. GRAPH RETRIEVAL ENGINE (Traverse Logic)
 # -------------------------------------------------------------
 def analyze_symptoms(user_input):
     user_input_clean = user_input.lower()
     matched_symptoms = []
     matched_diseases = set()
-    retrieved_relations = []
     
     # Matching symptoms from input string
     for node in G.nodes():
@@ -96,7 +88,6 @@ def analyze_symptoms(user_input):
             neighbors = list(G.neighbors(node))
             for n in neighbors:
                 rel = G[node][n]['relationship']
-                retrieved_relations.append((node.title(), rel, n))
                 if rel == "IS_SYMPTOM_OF":
                     matched_diseases.add(n)
                     
@@ -108,7 +99,7 @@ def analyze_symptoms(user_input):
             rel = G[dis][n]['relationship']
             disease_details[dis].append((rel, n))
             
-    return matched_symptoms, matched_diseases, disease_details, retrieved_relations
+    return matched_symptoms, matched_diseases, disease_details
 
 # -------------------------------------------------------------
 # 4. USER INTERFACE LAYOUT
@@ -118,8 +109,8 @@ col1, col2 = st.columns([1.1, 0.9])
 with col1:
     st.subheader("🔍 Enter Symptoms / स्वास्थ्य लक्षण लिखें")
     
-    # Preset Options for Easy Testing
-    preset = st.selectbox("⚡ क्विक टेस्ट हेतु कोई लक्षण चुनें (या नीचे खुद टाइप करें):", 
+    # Quick Test Dropdown Menu
+    preset = st.selectbox("⚡ क्विक टेस्ट हेतु लक्षण सेलेक्ट करें (या खुद टाइप करें):", 
                          ["-- खुद टाइप करें --", 
                           "stomach pain and acidity", 
                           "severe headache with light sensitivity", 
@@ -136,26 +127,33 @@ with col1:
             st.warning("कृपया पहले कोई लक्षण टाइप करें!")
         else:
             with st.spinner("Traversing Knowledge Graph Nodes..."):
-                symptoms, diseases, details, relations = analyze_symptoms(user_query)
+                symptoms, diseases, details = analyze_symptoms(user_query)
                 
                 if diseases:
                     st.success("🎯 Knowledge Graph Traversal Completed!")
-                    
-                    st.markdown("### 📋 Clinical Findings:")
                     st.write(f"**Identified Symptom Node(s):** `{', '.join(symptoms).title()}`")
-                    st.write(f"**Possible Pathology / Disease:** `{', '.join(diseases)}`")
+                    st.write("---")
                     
-                    st.markdown("---")
-                    st.markdown("### 💊 Recommended Actions & Safety Warnings:")
+                    # Output Section with 3 Explicit Color Boxes
                     for dis, info in details.items():
-                        st.markdown(f"#### 🔴 **{dis}**")
-                        for rel, target in info:
-                            if rel == "TREATED_BY":
-                                st.success(f"✅ **Treatment (`{rel}`):** {target}")
-                            elif rel == "PRECAUTION":
-                                st.error(f"⚠️ **Precaution (`{rel}`):** {target}")
-                            elif rel == "RECOMMENDED_DIET":
-                                st.info(f"🥗 **Dietary Advice (`{rel}`):** {target}")
+                        st.subheader(f"🔴 संभावित बीमारी: {dis}")
+                        
+                        # 1. 🟢 क्या करें / इलाज (Treatment)
+                        treatments = [target for rel, target in info if rel == "TREATED_BY"]
+                        if treatments:
+                            st.success("🟢 **क्या करें / इलाज (Treatment):**\n\n" + "\n".join([f"• {t}" for t in treatments]))
+                        
+                        # 2. 🔴 क्या न लें / क्या न करें (Precautions & Avoided Drugs)
+                        precautions = [target for rel, target in info if rel == "PRECAUTION"]
+                        if precautions:
+                            st.error("🚫 **क्या न लें / क्या न करें (Avoid / Precautions):**\n\n" + "\n".join([f"• {p}" for p in precautions]))
+                        
+                        # 3. 🔵 खान-पान की सलाह (Dietary Advice)
+                        diets = [target for rel, target in info if rel == "RECOMMENDED_DIET"]
+                        if diets:
+                            st.info("🥗 **खान-पान की सलाह (Dietary Advice):**\n\n" + "\n".join([f"• {d}" for d in diets]))
+                        
+                        st.write("---")
                 else:
                     st.error("❌ कोई बीमारी मैच नहीं हुई। कृपया लक्षण (जैसे: `stomach pain`, `headache`, `fever`, `acidity`) जाँचकर दोबारा टाइप करें।")
                 
