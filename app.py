@@ -219,10 +219,24 @@ def build_large_health_graph():
         )
     ]
 
+    # ---------------------------------------------------------
+    # ✅ FIX: previously `source.lower()` was applied to EVERY
+    # source node, regardless of whether it was a symptom or a
+    # disease. That silently created two different nodes for
+    # the same disease (e.g. "Acidity & Gastritis" as a symptom
+    # target, and "acidity & gastritis" as a treatment source),
+    # so treatment/precaution/diet edges became unreachable from
+    # the disease node returned by symptom matching.
+    #
+    # Fix: keep original casing for ALL nodes in the graph, and
+    # do case-insensitive comparisons only at lookup time
+    # (see analyze_symptoms below).
+    # ---------------------------------------------------------
+
     for source, target, relationship in medical_data:
 
         G.add_edge(
-            source.lower(),
+            source,
             target,
             relationship=relationship
         )
@@ -245,7 +259,8 @@ def analyze_symptoms(user_input):
     matched_diseases = set()
 
     # ---------------------------------------------------------
-    # MATCH SYMPTOMS
+    # MATCH SYMPTOMS (case-insensitive comparison, but node
+    # itself keeps its original casing from the graph)
     # ---------------------------------------------------------
 
     for node in G.nodes():
@@ -253,7 +268,7 @@ def analyze_symptoms(user_input):
         if not isinstance(node, str):
             continue
 
-        if node in user_input_clean:
+        if node.lower() in user_input_clean:
 
             for neighbor in G.neighbors(node):
 
