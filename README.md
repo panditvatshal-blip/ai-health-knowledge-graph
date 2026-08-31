@@ -116,6 +116,10 @@ This software system is intended solely for educational, research, and technical
 
 ---
 
-## 📝 License
+## 👨‍💻 Author
+Developed by **Vatsal Mishra**  
+GitHub: panditvatshal-blip [(github.com in Bing)](https://www.bing.com/search?q="https%3A%2F%2Fgithub.com%2Fpanditvatshal-blip")
 
-Distributed under the MIT License.
+## 📜 License
+This project is licensed under the **MIT License**.  
+Feel free to use, modify, and distribute with attribution.
