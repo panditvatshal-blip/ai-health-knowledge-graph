@@ -19,13 +19,13 @@ st.markdown('<div class="sub-header">GraphRAG & Topological Graph Traversal Syst
 st.write("---")
 
 # -------------------------------------------------------------
-# 2. KNOWLEDGE GRAPH BUILDER (All Symptoms, Diseases & Precautions)
+# 2. KNOWLEDGE GRAPH BUILDER (Complete Dataset)
 # -------------------------------------------------------------
 @st.cache_resource
 def build_large_health_graph():
     G = nx.DiGraph()
     
-    # बीमारियों, लक्षणों, इलाजों और सावधानियों का पूरा नेटवर्क
+    # मेडिकल नॉलेज ग्राफ का डेटासेट
     medical_data = [
         # 1. Stomach Pain / Acidity / Food Poisoning
         ("stomach pain", "Food Poisoning", "IS_SYMPTOM_OF"),
@@ -36,6 +36,7 @@ def build_large_health_graph():
 
         ("stomach pain", "Acidity / Gastritis", "IS_SYMPTOM_OF"),
         ("heartburn", "Acidity / Gastritis", "IS_SYMPTOM_OF"),
+        ("acidity", "Acidity / Gastritis", "IS_SYMPTOM_OF"),
         ("Acidity / Gastritis", "Antacids & Warm Water", "TREATED_BY"),
         ("Acidity / Gastritis", "Avoid Spicy Food, Tea & Coffee", "PRECAUTION"),
         ("Acidity / Gastritis", "Avoid Sleeping Immediately After Meals", "PRECAUTION"),
@@ -74,14 +75,14 @@ def build_large_health_graph():
 G = build_large_health_graph()
 
 # -------------------------------------------------------------
-# 3. GRAPH RETRIEVAL ENGINE (Traverse Logic)
+# 3. GRAPH RETRIEVAL ENGINE (Single Output Aggregator)
 # -------------------------------------------------------------
 def analyze_symptoms(user_input):
     user_input_clean = user_input.lower()
     matched_symptoms = []
     matched_diseases = set()
     
-    # Matching symptoms from input string
+    # 1. Matches nodes from user query
     for node in G.nodes():
         if isinstance(node, str) and node in user_input_clean:
             matched_symptoms.append(node)
@@ -91,15 +92,22 @@ def analyze_symptoms(user_input):
                 if rel == "IS_SYMPTOM_OF":
                     matched_diseases.add(n)
                     
-    # Fetch Treatments & Precautions for detected diseases
-    disease_details = {}
+    # 2. Consolidate Treatments, Precautions & Diets across all matched diseases
+    all_treatments = set()
+    all_precautions = set()
+    all_diets = set()
+    
     for dis in matched_diseases:
-        disease_details[dis] = []
         for n in G.neighbors(dis):
             rel = G[dis][n]['relationship']
-            disease_details[dis].append((rel, n))
+            if rel == "TREATED_BY":
+                all_treatments.add(f"{n} (for {dis})")
+            elif rel == "PRECAUTION":
+                all_precautions.add(f"{n} (for {dis})")
+            elif rel == "RECOMMENDED_DIET":
+                all_diets.add(f"{n} (for {dis})")
             
-    return matched_symptoms, matched_diseases, disease_details
+    return matched_symptoms, list(matched_diseases), list(all_treatments), list(all_precautions), list(all_diets)
 
 # -------------------------------------------------------------
 # 4. USER INTERFACE LAYOUT
@@ -127,33 +135,29 @@ with col1:
             st.warning("कृपया पहले कोई लक्षण टाइप करें!")
         else:
             with st.spinner("Traversing Knowledge Graph Nodes..."):
-                symptoms, diseases, details = analyze_symptoms(user_query)
+                symptoms, diseases, treatments, precautions, diets = analyze_symptoms(user_query)
                 
                 if diseases:
                     st.success("🎯 Knowledge Graph Traversal Completed!")
+                    
+                    # 1. संभावी बीमारी (केवल एक बार दिखेगी)
+                    diseases_str = " | ".join(diseases)
+                    st.markdown(f"### 🔴 **संभावित बीमारी (Detected Condition):** `{diseases_str}`")
                     st.write(f"**Identified Symptom Node(s):** `{', '.join(symptoms).title()}`")
                     st.write("---")
                     
-                    # Output Section with 3 Explicit Color Boxes
-                    for dis, info in details.items():
-                        st.subheader(f"🔴 संभावित बीमारी: {dis}")
+                    # 2. 🟢 क्या करें / इलाज (Treatment Box)
+                    if treatments:
+                        st.success("🟢 **क्या करें / इलाज (Treatment):**\n\n" + "\n".join([f"• {t}" for t in treatments]))
+                    
+                    # 3. 🔴 क्या न लें / सावधानियां (Avoid Box)
+                    if precautions:
+                        st.error("🚫 **क्या न लें / क्या न करें (Avoid / Precautions):**\n\n" + "\n".join([f"• {p}" for p in precautions]))
+                    
+                    # 4. 🔵 खान-पान की सलाह (Diet Box)
+                    if diets:
+                        st.info("🥗 **खान-पान की सलाह (Dietary Advice):**\n\n" + "\n".join([f"• {d}" for d in diets]))
                         
-                        # 1. 🟢 क्या करें / इलाज (Treatment)
-                        treatments = [target for rel, target in info if rel == "TREATED_BY"]
-                        if treatments:
-                            st.success("🟢 **क्या करें / इलाज (Treatment):**\n\n" + "\n".join([f"• {t}" for t in treatments]))
-                        
-                        # 2. 🔴 क्या न लें / क्या न करें (Precautions & Avoided Drugs)
-                        precautions = [target for rel, target in info if rel == "PRECAUTION"]
-                        if precautions:
-                            st.error("🚫 **क्या न लें / क्या न करें (Avoid / Precautions):**\n\n" + "\n".join([f"• {p}" for p in precautions]))
-                        
-                        # 3. 🔵 खान-पान की सलाह (Dietary Advice)
-                        diets = [target for rel, target in info if rel == "RECOMMENDED_DIET"]
-                        if diets:
-                            st.info("🥗 **खान-पान की सलाह (Dietary Advice):**\n\n" + "\n".join([f"• {d}" for d in diets]))
-                        
-                        st.write("---")
                 else:
                     st.error("❌ कोई बीमारी मैच नहीं हुई। कृपया लक्षण (जैसे: `stomach pain`, `headache`, `fever`, `acidity`) जाँचकर दोबारा टाइप करें।")
                 
@@ -161,13 +165,15 @@ with col1:
 
 with col2:
     st.subheader("🌐 Visual Knowledge Graph Network")
-    fig, ax = plt.subplots(figsize=(8, 7))
-    pos = nx.spring_layout(G, seed=42)
+    fig, ax = plt.subplots(figsize=(10, 8))
     
-    # Custom styling for nodes
-    nx.draw_networkx_nodes(G, pos, node_color="#3B82F6", node_size=1200, alpha=0.9, ax=ax)
-    nx.draw_networkx_labels(G, pos, font_size=8, font_color="white", font_weight="bold", ax=ax)
-    nx.draw_networkx_edges(G, pos, edge_color="#9CA3AF", arrows=True, arrowsize=15, ax=ax)
+    # k=1.2 नोड्स को आपस में चिपकने से रोकेगा
+    pos = nx.spring_layout(G, k=1.2, seed=42)
+    
+    # नोड्स और टेक्स्ट का स्टाइल
+    nx.draw_networkx_nodes(G, pos, node_color="#2563EB", node_size=1800, alpha=0.85, ax=ax)
+    nx.draw_networkx_labels(G, pos, font_size=7, font_color="white", font_weight="bold", ax=ax)
+    nx.draw_networkx_edges(G, pos, edge_color="#9CA3AF", arrows=True, arrowsize=12, width=1.2, ax=ax)
     
     plt.axis("off")
     st.pyplot(fig)
