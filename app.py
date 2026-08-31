@@ -2,9 +2,10 @@ import streamlit as st
 import networkx as nx
 import matplotlib.pyplot as plt
 
-# -------------------------------------------------------------
-# 1. PAGE CONFIG & STYLING
-# -------------------------------------------------------------
+
+# =============================================================
+# 1. PAGE CONFIG
+# =============================================================
 
 st.set_page_config(
     page_title="Enterprise AI Health Knowledge Graph",
@@ -12,88 +13,35 @@ st.set_page_config(
     page_icon="🩺"
 )
 
-st.markdown("""
-<style>
 
-.main-header {
-    font-size: 2.2rem;
-    font-weight: bold;
-    color: #1E3A8A;
-}
-
-.sub-header {
-    font-size: 1.1rem;
-    color: #4B5563;
-}
-
-/* GREEN - WHAT TO DO */
-.box-treatment {
-    background-color: #D1FAE5;
-    border-left: 6px solid #10B981;
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    color: #065F46;
-    line-height: 1.6;
-}
-
-/* RED - WHAT NOT TO DO */
-.box-avoid {
-    background-color: #FEE2E2;
-    border-left: 6px solid #EF4444;
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    color: #991B1B;
-    line-height: 1.6;
-}
-
-/* BLUE - DIET */
-.box-diet {
-    background-color: #DBEAFE;
-    border-left: 6px solid #3B82F6;
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    color: #1E40AF;
-    line-height: 1.6;
-}
-
-/* YELLOW - DOCTOR */
-.box-doctor {
-    background-color: #FEF3C7;
-    border-left: 6px solid #F59E0B;
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    color: #92400E;
-    line-height: 1.6;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-
-# -------------------------------------------------------------
+# =============================================================
 # 2. HEADER
-# -------------------------------------------------------------
+# =============================================================
 
 st.markdown(
-    '<div class="main-header">🩺 Enterprise AI Health Knowledge Graph Engine</div>',
+    """
+    <h1 style="color:#1E3A8A;">
+        🩺 Enterprise AI Health Knowledge Graph Engine
+    </h1>
+    """,
     unsafe_allow_html=True
 )
 
 st.markdown(
-    '<div class="sub-header">GraphRAG & Topological Graph Traversal System for Clinical Decision Support</div>',
+    """
+    <p style="font-size:1.1rem;color:#4B5563;">
+        GraphRAG & Topological Graph Traversal System for Clinical Decision Support
+    </p>
+    """,
     unsafe_allow_html=True
 )
 
 st.write("---")
 
 
-# -------------------------------------------------------------
-# 3. KNOWLEDGE GRAPH DATASET
-# -------------------------------------------------------------
+# =============================================================
+# 3. KNOWLEDGE GRAPH
+# =============================================================
 
 @st.cache_resource
 def build_large_health_graph():
@@ -102,9 +50,9 @@ def build_large_health_graph():
 
     medical_data = [
 
-        # =====================================================
+        # -----------------------------------------------------
         # ACIDITY & GASTRITIS
-        # =====================================================
+        # -----------------------------------------------------
 
         ("stomach pain", "Acidity & Gastritis", "IS_SYMPTOM_OF"),
         ("heartburn", "Acidity & Gastritis", "IS_SYMPTOM_OF"),
@@ -135,9 +83,9 @@ def build_large_health_graph():
         ),
 
 
-        # =====================================================
+        # -----------------------------------------------------
         # FOOD POISONING
-        # =====================================================
+        # -----------------------------------------------------
 
         ("stomach pain", "Food Poisoning", "IS_SYMPTOM_OF"),
         ("vomiting", "Food Poisoning", "IS_SYMPTOM_OF"),
@@ -167,9 +115,9 @@ def build_large_health_graph():
         ),
 
 
-        # =====================================================
+        # -----------------------------------------------------
         # DENGUE FEVER
-        # =====================================================
+        # -----------------------------------------------------
 
         ("high fever", "Dengue Fever", "IS_SYMPTOM_OF"),
         ("joint pain", "Dengue Fever", "IS_SYMPTOM_OF"),
@@ -180,123 +128,49 @@ def build_large_health_graph():
             "TREATED_BY"
         ),
 
-      if diseases:
+        (
+            "Dengue Fever",
+            "Avoid Aspirin & Ibuprofen Unless Advised by a Doctor",
+            "PRECAUTION"
+        ),
 
-    st.success("🎯 Knowledge Graph Traversal Completed!")
-
-    # ---------------------------------------------------------
-    # 1. POSSIBLE DISEASE
-    # ---------------------------------------------------------
-
-    diseases_str = " | ".join(diseases)
-
-    st.markdown(
-        f"### 🔴 संभावित बीमारी: `{diseases_str}`"
-    )
-
-    if symptoms:
-        st.write(
-            f"**Identified Symptom Node(s):** "
-            f"`{', '.join(symptoms).title()}`"
-        )
-
-    st.write("---")
+        (
+            "Dengue Fever",
+            "Adequate Fluids & Nutritious Foods",
+            "RECOMMENDED_DIET"
+        ),
 
 
-    # =========================================================
-    # 2. 🟢 WHAT TO DO
-    # =========================================================
+        # -----------------------------------------------------
+        # MIGRAINE
+        # -----------------------------------------------------
 
-    st.markdown("### 🟢 क्या करें / What To Do")
+        ("severe headache", "Migraine", "IS_SYMPTOM_OF"),
+        ("light sensitivity", "Migraine", "IS_SYMPTOM_OF"),
 
-    if treatments:
+        (
+            "Migraine",
+            "Rest in a Dark Quiet Room & Maintain Hydration",
+            "TREATED_BY"
+        ),
 
-        for treatment in treatments:
-            # Remove graph annotation if present
-            clean_treatment = treatment.replace(
-                "<i>", ""
-            ).replace(
-                "</i>", ""
-            )
+        (
+            "Migraine",
+            "Avoid Loud Noises, Bright Screens & Skipping Meals",
+            "PRECAUTION"
+        ),
 
-            st.success(
-                f"✅ {clean_treatment}"
-            )
-
-    else:
-
-        st.info(
-            "इस बीमारी के लिए treatment information "
-            "Knowledge Graph में उपलब्ध नहीं है।"
-        )
+        (
+            "Migraine",
+            "Balanced Meals & Magnesium-Rich Foods",
+            "RECOMMENDED_DIET"
+        ),
 
 
-    # =========================================================
-    # 3. 🚫 WHAT NOT TO DO
-    # =========================================================
+        # -----------------------------------------------------
+        # DIABETES
+        # -----------------------------------------------------
 
-    st.markdown("### 🚫 क्या न करें / What To Avoid")
-
-    if precautions:
-
-        for precaution in precautions:
-
-            clean_precaution = precaution.replace(
-                "<i>", ""
-            ).replace(
-                "</i>", ""
-            )
-
-            st.error(
-                f"❌ {clean_precaution}"
-            )
-
-    else:
-
-        st.info(
-            "इस बीमारी के लिए precaution information "
-            "Knowledge Graph में उपलब्ध नहीं है।"
-        )
-
-
-    # =========================================================
-    # 4. 🥗 DIETARY ADVICE
-    # =========================================================
-
-    st.markdown("### 🥗 खान-पान की सलाह / Dietary Advice")
-
-    if diets:
-
-        for diet in diets:
-
-            clean_diet = diet.replace(
-                "<i>", ""
-            ).replace(
-                "</i>", ""
-            )
-
-            st.info(
-                f"🥗 {clean_diet}"
-            )
-
-    else:
-
-        st.info(
-            "इस बीमारी के लिए dietary information "
-            "Knowledge Graph में उपलब्ध नहीं है।"
-        )
-
-
-    # =========================================================
-    # 5. ⚠️ MEDICAL NOTE
-    # =========================================================
-
-    st.warning(
-        "⚠️ **कब डॉक्टर से संपर्क करें?**\n\n"
-        "अगर लक्षण बहुत गंभीर हों, तेजी से बिगड़ रहे हों, "
-        "लगातार बने रहें, या आपको अपनी स्थिति को लेकर चिंता हो, "
-        "तो qualified doctor/health professional से medical evaluation लें।"
-    )
         ("high blood sugar", "Diabetes", "IS_SYMPTOM_OF"),
         ("frequent urination", "Diabetes", "IS_SYMPTOM_OF"),
 
@@ -319,9 +193,9 @@ def build_large_health_graph():
         ),
 
 
-        # =====================================================
+        # -----------------------------------------------------
         # COMMON COLD
-        # =====================================================
+        # -----------------------------------------------------
 
         ("runny nose", "Common Cold", "IS_SYMPTOM_OF"),
         ("sneezing", "Common Cold", "IS_SYMPTOM_OF"),
@@ -345,11 +219,12 @@ def build_large_health_graph():
         )
     ]
 
-    for u, v, rel in medical_data:
+    for source, target, relationship in medical_data:
+
         G.add_edge(
-            u.lower(),
-            v,
-            relationship=rel
+            source.lower(),
+            target,
+            relationship=relationship
         )
 
     return G
@@ -358,9 +233,9 @@ def build_large_health_graph():
 G = build_large_health_graph()
 
 
-# -------------------------------------------------------------
-# 4. GRAPH TRAVERSAL ENGINE
-# -------------------------------------------------------------
+# =============================================================
+# 4. ANALYZE SYMPTOMS
+# =============================================================
 
 def analyze_symptoms(user_input):
 
@@ -380,9 +255,7 @@ def analyze_symptoms(user_input):
 
         if node in user_input_clean:
 
-            neighbors = list(G.neighbors(node))
-
-            for neighbor in neighbors:
+            for neighbor in G.neighbors(node):
 
                 relationship = G[node][neighbor]["relationship"]
 
@@ -391,11 +264,14 @@ def analyze_symptoms(user_input):
                     matched_symptoms.append(node)
                     matched_diseases.add(neighbor)
 
-    # Remove duplicates
-    matched_symptoms = list(dict.fromkeys(matched_symptoms))
+    # Remove duplicate symptoms
+    matched_symptoms = list(
+        dict.fromkeys(matched_symptoms)
+    )
+
 
     # ---------------------------------------------------------
-    # DIRECT DISEASE NAME SEARCH
+    # DIRECT DISEASE NAME MATCH
     # ---------------------------------------------------------
 
     disease_names = [
@@ -413,8 +289,9 @@ def analyze_symptoms(user_input):
 
             matched_diseases.add(disease)
 
+
     # ---------------------------------------------------------
-    # TRAVERSE GRAPH
+    # GET TREATMENT / PRECAUTION / DIET
     # ---------------------------------------------------------
 
     treatments = []
@@ -422,6 +299,9 @@ def analyze_symptoms(user_input):
     diets = []
 
     for disease in matched_diseases:
+
+        if disease not in G:
+            continue
 
         for neighbor in G.neighbors(disease):
 
@@ -439,18 +319,25 @@ def analyze_symptoms(user_input):
 
                 diets.append(neighbor)
 
+
+    # Remove duplicates
+    treatments = list(dict.fromkeys(treatments))
+    precautions = list(dict.fromkeys(precautions))
+    diets = list(dict.fromkeys(diets))
+
+
     return (
         matched_symptoms,
         list(matched_diseases),
-        list(dict.fromkeys(treatments)),
-        list(dict.fromkeys(precautions)),
-        list(dict.fromkeys(diets))
+        treatments,
+        precautions,
+        diets
     )
 
 
-# -------------------------------------------------------------
-# 5. USER INTERFACE
-# -------------------------------------------------------------
+# =============================================================
+# 5. MAIN LAYOUT
+# =============================================================
 
 col1, col2 = st.columns([1.1, 0.9])
 
@@ -465,6 +352,11 @@ with col1:
         "🔍 Enter Symptoms / स्वास्थ्य लक्षण लिखें"
     )
 
+
+    # ---------------------------------------------------------
+    # QUICK TEST
+    # ---------------------------------------------------------
+
     preset = st.selectbox(
         "⚡ क्विक टेस्ट हेतु लक्षण सेलेक्ट करें (या खुद टाइप करें):",
 
@@ -473,25 +365,35 @@ with col1:
             "stomach pain and acidity",
             "severe headache with light sensitivity",
             "high fever and joint pain",
-            "high blood sugar and frequent urination"
+            "high blood sugar and frequent urination",
+            "vomiting and stomach pain",
+            "runny nose and sneezing"
         ]
     )
 
-    default_text = (
-        ""
-        if preset == "-- खुद टाइप करें --"
-        else preset
-    )
+
+    if preset == "-- खुद टाइप करें --":
+
+        default_text = ""
+
+    else:
+
+        default_text = preset
+
+
+    # ---------------------------------------------------------
+    # INPUT
+    # ---------------------------------------------------------
 
     user_query = st.text_area(
-        "यहाँ अपने लक्षण लिखें (e.g., I have stomach pain and heartburn):",
+        "यहाँ अपने लक्षण लिखें:",
         value=default_text,
         height=100
     )
 
 
     # ---------------------------------------------------------
-    # ANALYZE
+    # ANALYZE BUTTON
     # ---------------------------------------------------------
 
     if st.button(
@@ -521,7 +423,7 @@ with col1:
 
 
             # =================================================
-            # RESULT
+            # DISEASE FOUND
             # =================================================
 
             if diseases:
@@ -538,8 +440,9 @@ with col1:
                 diseases_str = " | ".join(diseases)
 
                 st.markdown(
-                    f"### 🔴 **संभावित बीमारी:** `{diseases_str}`"
+                    f"### 🔴 संभावित बीमारी: `{diseases_str}`"
                 )
+
 
                 if symptoms:
 
@@ -548,6 +451,7 @@ with col1:
                         f"`{', '.join(symptoms).title()}`"
                     )
 
+
                 st.write("---")
 
 
@@ -555,23 +459,23 @@ with col1:
                 # 🟢 WHAT TO DO
                 # =================================================
 
+                st.subheader(
+                    "🟢 क्या करें / What To Do"
+                )
+
                 if treatments:
 
-                    treatment_text = "<br>".join(
-                        [
-                            f"• {item}"
-                            for item in treatments
-                        ]
-                    )
+                    for treatment in treatments:
 
-                    st.markdown(
-                        f"""
-                        <div class="box-treatment">
-                        <strong>🟢 क्या करें / What To Do</strong><br><br>
-                        {treatment_text}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
+                        st.success(
+                            f"✅ {treatment}"
+                        )
+
+                else:
+
+                    st.info(
+                        "इस बीमारी के लिए treatment information "
+                        "Knowledge Graph में उपलब्ध नहीं है।"
                     )
 
 
@@ -579,23 +483,23 @@ with col1:
                 # 🚫 WHAT NOT TO DO
                 # =================================================
 
+                st.subheader(
+                    "🚫 क्या न करें / What To Avoid"
+                )
+
                 if precautions:
 
-                    precaution_text = "<br>".join(
-                        [
-                            f"• {item}"
-                            for item in precautions
-                        ]
-                    )
+                    for precaution in precautions:
 
-                    st.markdown(
-                        f"""
-                        <div class="box-avoid">
-                        <strong>🚫 क्या न करें / What To Avoid</strong><br><br>
-                        {precaution_text}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
+                        st.error(
+                            f"❌ {precaution}"
+                        )
+
+                else:
+
+                    st.info(
+                        "इस बीमारी के लिए precaution information "
+                        "Knowledge Graph में उपलब्ध नहीं है।"
                     )
 
 
@@ -603,23 +507,23 @@ with col1:
                 # 🥗 DIET
                 # =================================================
 
+                st.subheader(
+                    "🥗 खान-पान की सलाह / Dietary Advice"
+                )
+
                 if diets:
 
-                    diet_text = "<br>".join(
-                        [
-                            f"• {item}"
-                            for item in diets
-                        ]
-                    )
+                    for diet in diets:
 
-                    st.markdown(
-                        f"""
-                        <div class="box-diet">
-                        <strong>🥗 खान-पान की सलाह / Dietary Advice</strong><br><br>
-                        {diet_text}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
+                        st.info(
+                            f"🥗 {diet}"
+                        )
+
+                else:
+
+                    st.info(
+                        "इस बीमारी के लिए dietary information "
+                        "Knowledge Graph में उपलब्ध नहीं है।"
                     )
 
 
@@ -627,47 +531,58 @@ with col1:
                 # ⚠️ DOCTOR NOTE
                 # =================================================
 
-                st.markdown(
+                st.warning(
                     """
-                    <div class="box-doctor">
-                    <strong>⚠️ कब डॉक्टर से संपर्क करें?</strong><br><br>
+                    ⚠️ **कब डॉक्टर से संपर्क करें?**
+
                     अगर लक्षण बहुत गंभीर हों, तेजी से बिगड़ रहे हों,
                     लगातार बने रहें, या आपको अपनी स्थिति को लेकर चिंता हो,
                     तो qualified doctor/health professional से medical evaluation लें।
-                    </div>
-                    """,
-                    unsafe_allow_html=True
+                    """
                 )
 
 
             # =================================================
-            # NO MATCH
+            # NO DISEASE FOUND
             # =================================================
 
             else:
 
                 st.error(
-                    "❌ कोई बीमारी मैच नहीं हुई। "
-                    "कृपया लक्षण जैसे "
-                    "`stomach pain`, `headache`, `fever`, "
-                    "`acidity`, `vomiting` आदि जाँचकर दोबारा टाइप करें।"
+                    """
+                    ❌ कोई बीमारी मैच नहीं हुई।
+
+                    कृपया इनमें से कोई symptom try करें:
+
+                    `stomach pain`  
+                    `acidity`  
+                    `heartburn`  
+                    `vomiting`  
+                    `high fever`  
+                    `joint pain`  
+                    `severe headache`  
+                    `light sensitivity`  
+                    `high blood sugar`  
+                    `frequent urination`  
+                    `runny nose`  
+                    `sneezing`
+                    """
                 )
 
 
-            # -------------------------------------------------
+            # =================================================
             # DISCLAIMER
-            # -------------------------------------------------
+            # =================================================
 
-            st.warning(
-                "⚠️ **Medical Disclaimer:** "
-                "This system provides structured informational outputs "
-                "from a Knowledge Graph. Consult a qualified medical "
-                "practitioner for formal clinical evaluation."
+            st.caption(
+                "⚠️ Medical Disclaimer: This system provides "
+                "structured informational outputs from a Knowledge Graph "
+                "and is not a substitute for professional medical diagnosis."
             )
 
 
 # =============================================================
-# RIGHT COLUMN
+# RIGHT COLUMN - VISUAL GRAPH
 # =============================================================
 
 with col2:
@@ -676,9 +591,15 @@ with col2:
         "🌐 Visual Knowledge Graph Network"
     )
 
+
     fig, ax = plt.subplots(
         figsize=(10, 9)
     )
+
+
+    # ---------------------------------------------------------
+    # GRAPH POSITION
+    # ---------------------------------------------------------
 
     pos = nx.spring_layout(
         G,
@@ -725,6 +646,7 @@ with col2:
         node: node.title()
         for node in G.nodes()
     }
+
 
     for node, (x, y) in pos.items():
 
