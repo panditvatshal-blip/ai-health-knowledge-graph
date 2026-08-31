@@ -12,7 +12,6 @@ st.set_page_config(
     page_icon="🩺"
 )
 
-# Custom CSS for HTML Cards
 st.markdown("""
 <style>
 
@@ -27,46 +26,48 @@ st.markdown("""
     color: #4B5563;
 }
 
+/* GREEN - WHAT TO DO */
 .box-treatment {
     background-color: #D1FAE5;
     border-left: 6px solid #10B981;
-    padding: 15px;
+    padding: 16px;
     border-radius: 8px;
     margin-bottom: 15px;
     color: #065F46;
+    line-height: 1.6;
 }
 
+/* RED - WHAT NOT TO DO */
 .box-avoid {
     background-color: #FEE2E2;
     border-left: 6px solid #EF4444;
-    padding: 15px;
+    padding: 16px;
     border-radius: 8px;
     margin-bottom: 15px;
     color: #991B1B;
+    line-height: 1.6;
 }
 
+/* BLUE - DIET */
 .box-diet {
     background-color: #DBEAFE;
     border-left: 6px solid #3B82F6;
-    padding: 15px;
+    padding: 16px;
     border-radius: 8px;
     margin-bottom: 15px;
     color: #1E40AF;
+    line-height: 1.6;
 }
 
+/* YELLOW - DOCTOR */
 .box-doctor {
     background-color: #FEF3C7;
     border-left: 6px solid #F59E0B;
-    padding: 15px;
+    padding: 16px;
     border-radius: 8px;
     margin-bottom: 15px;
     color: #92400E;
-}
-
-.box-title {
-    font-weight: bold;
-    font-size: 1.15rem;
-    margin-bottom: 8px;
+    line-height: 1.6;
 }
 
 </style>
@@ -91,7 +92,7 @@ st.write("---")
 
 
 # -------------------------------------------------------------
-# 3. COMPLETE KNOWLEDGE GRAPH DATASET
+# 3. KNOWLEDGE GRAPH DATASET
 # -------------------------------------------------------------
 
 @st.cache_resource
@@ -101,9 +102,9 @@ def build_large_health_graph():
 
     medical_data = [
 
-        # -----------------------------------------------------
-        # Stomach Pain / Acidity / Food Poisoning
-        # -----------------------------------------------------
+        # =====================================================
+        # ACIDITY & GASTRITIS
+        # =====================================================
 
         ("stomach pain", "Acidity & Gastritis", "IS_SYMPTOM_OF"),
         ("heartburn", "Acidity & Gastritis", "IS_SYMPTOM_OF"),
@@ -133,6 +134,11 @@ def build_large_health_graph():
             "RECOMMENDED_DIET"
         ),
 
+
+        # =====================================================
+        # FOOD POISONING
+        # =====================================================
+
         ("stomach pain", "Food Poisoning", "IS_SYMPTOM_OF"),
         ("vomiting", "Food Poisoning", "IS_SYMPTOM_OF"),
 
@@ -161,74 +167,74 @@ def build_large_health_graph():
         ),
 
 
-        # -----------------------------------------------------
-        # Dengue Fever
-        # -----------------------------------------------------
+        # =====================================================
+        # DENGUE FEVER
+        # =====================================================
 
         ("high fever", "Dengue Fever", "IS_SYMPTOM_OF"),
         ("joint pain", "Dengue Fever", "IS_SYMPTOM_OF"),
 
         (
             "Dengue Fever",
-            "Hydration & Paracetamol",
+            "Hydration & Doctor-Guided Supportive Care",
             "TREATED_BY"
         ),
 
         (
             "Dengue Fever",
-            "AVOID ASPIRIN & IBUPROFEN (Causes Internal Bleeding)",
+            "Avoid Aspirin & Ibuprofen Unless Advised by a Doctor",
             "PRECAUTION"
         ),
 
         (
             "Dengue Fever",
-            "Papaya Leaf Extract & Coconut Water",
+            "Adequate Fluids & Nutritious Foods",
             "RECOMMENDED_DIET"
         ),
 
 
-        # -----------------------------------------------------
-        # Migraine
-        # -----------------------------------------------------
+        # =====================================================
+        # MIGRAINE
+        # =====================================================
 
         ("severe headache", "Migraine", "IS_SYMPTOM_OF"),
         ("light sensitivity", "Migraine", "IS_SYMPTOM_OF"),
 
         (
             "Migraine",
-            "Dark Room Rest & Adequate Hydration",
+            "Rest in a Dark Quiet Room & Maintain Hydration",
             "TREATED_BY"
         ),
 
         (
             "Migraine",
-            "Avoid Loud Noises, Bright Screens & Skip Meals",
+            "Avoid Loud Noises, Bright Screens & Skipping Meals",
             "PRECAUTION"
         ),
 
         (
             "Migraine",
-            "Magnesium-Rich Foods & Herbal Tea",
+            "Balanced Meals & Magnesium-Rich Foods",
             "RECOMMENDED_DIET"
         ),
 
 
-        # -----------------------------------------------------
-        # Diabetes
-        # -----------------------------------------------------
+        # =====================================================
+        # DIABETES
+        # =====================================================
 
         ("high blood sugar", "Diabetes", "IS_SYMPTOM_OF"),
         ("frequent urination", "Diabetes", "IS_SYMPTOM_OF"),
 
         (
             "Diabetes",
-            "Insulin & Doctor Prescribed Medication",
+            "Follow Doctor-Prescribed Medication & Blood Sugar Monitoring",
             "TREATED_BY"
         ),
 
         (
             "Diabetes",
-            "Avoid Sugar, Sweet Beverages & Refined Sweets",
+            "Avoid Excess Sugar, Sweet Beverages & Refined Sweets",
             "PRECAUTION"
         ),
 
@@ -239,33 +245,32 @@ def build_large_health_graph():
         ),
 
 
-        # -----------------------------------------------------
-        # Common Cold
-        # -----------------------------------------------------
+        # =====================================================
+        # COMMON COLD
+        # =====================================================
 
         ("runny nose", "Common Cold", "IS_SYMPTOM_OF"),
         ("sneezing", "Common Cold", "IS_SYMPTOM_OF"),
 
         (
             "Common Cold",
-            "Steam Inhalation & Warm Salt Water Gargle",
+            "Rest, Warm Fluids & Supportive Care",
             "TREATED_BY"
         ),
 
         (
             "Common Cold",
-            "Avoid Cold Drinks, Ice Creams & Chilled Items",
+            "Avoid Smoke, Irritants & Anything That Worsens Symptoms",
             "PRECAUTION"
         ),
 
         (
             "Common Cold",
-            "Hot Soup & Vitamin-C Rich Citrus Fruits",
+            "Warm Soup, Fruits & Adequate Fluids",
             "RECOMMENDED_DIET"
         )
     ]
 
-    # Add all graph edges
     for u, v, rel in medical_data:
         G.add_edge(
             u.lower(),
@@ -291,30 +296,32 @@ def analyze_symptoms(user_input):
     matched_diseases = set()
 
     # ---------------------------------------------------------
-    # 1. Match Symptoms
+    # MATCH SYMPTOMS
     # ---------------------------------------------------------
 
     for node in G.nodes():
 
-        if isinstance(node, str) and node in user_input_clean:
+        if not isinstance(node, str):
+            continue
 
-            # Check whether node is a symptom node
+        if node in user_input_clean:
+
             neighbors = list(G.neighbors(node))
 
-            for n in neighbors:
+            for neighbor in neighbors:
 
-                rel = G[node][n]["relationship"]
+                relationship = G[node][neighbor]["relationship"]
 
-                if rel == "IS_SYMPTOM_OF":
+                if relationship == "IS_SYMPTOM_OF":
 
                     matched_symptoms.append(node)
-                    matched_diseases.add(n)
+                    matched_diseases.add(neighbor)
 
-    # Remove duplicate symptoms
+    # Remove duplicates
     matched_symptoms = list(dict.fromkeys(matched_symptoms))
 
     # ---------------------------------------------------------
-    # 2. Direct Disease Name Match
+    # DIRECT DISEASE NAME SEARCH
     # ---------------------------------------------------------
 
     disease_names = [
@@ -329,51 +336,46 @@ def analyze_symptoms(user_input):
     for disease in disease_names:
 
         if disease.lower() in user_input_clean:
+
             matched_diseases.add(disease)
 
     # ---------------------------------------------------------
-    # 3. Traverse Graph Edges
+    # TRAVERSE GRAPH
     # ---------------------------------------------------------
 
-    all_treatments = set()
-    all_precautions = set()
-    all_diets = set()
+    treatments = []
+    precautions = []
+    diets = []
 
-    for dis in matched_diseases:
+    for disease in matched_diseases:
 
-        for n in G.neighbors(dis):
+        for neighbor in G.neighbors(disease):
 
-            rel = G[dis][n]["relationship"]
+            relationship = G[disease][neighbor]["relationship"]
 
-            if rel == "TREATED_BY":
+            if relationship == "TREATED_BY":
 
-                all_treatments.add(
-                    f"{n} <i>(for {dis})</i>"
-                )
+                treatments.append(neighbor)
 
-            elif rel == "PRECAUTION":
+            elif relationship == "PRECAUTION":
 
-                all_precautions.add(
-                    f"{n} <i>(for {dis})</i>"
-                )
+                precautions.append(neighbor)
 
-            elif rel == "RECOMMENDED_DIET":
+            elif relationship == "RECOMMENDED_DIET":
 
-                all_diets.add(
-                    f"{n} <i>(for {dis})</i>"
-                )
+                diets.append(neighbor)
 
     return (
         matched_symptoms,
         list(matched_diseases),
-        list(all_treatments),
-        list(all_precautions),
-        list(all_diets)
+        list(dict.fromkeys(treatments)),
+        list(dict.fromkeys(precautions)),
+        list(dict.fromkeys(diets))
     )
 
 
 # -------------------------------------------------------------
-# 5. USER INTERFACE LAYOUT
+# 5. USER INTERFACE
 # -------------------------------------------------------------
 
 col1, col2 = st.columns([1.1, 0.9])
@@ -415,7 +417,7 @@ with col1:
 
 
     # ---------------------------------------------------------
-    # ANALYZE BUTTON
+    # ANALYZE
     # ---------------------------------------------------------
 
     if st.button(
@@ -444,9 +446,9 @@ with col1:
                 ) = analyze_symptoms(user_query)
 
 
-            # -------------------------------------------------
-            # DISEASE FOUND
-            # -------------------------------------------------
+            # =================================================
+            # RESULT
+            # =================================================
 
             if diseases:
 
@@ -455,9 +457,9 @@ with col1:
                 )
 
 
-                # ---------------------------------------------
+                # -------------------------------------------------
                 # POSSIBLE DISEASE
-                # ---------------------------------------------
+                # -------------------------------------------------
 
                 diseases_str = " | ".join(diseases)
 
@@ -468,7 +470,7 @@ with col1:
                 if symptoms:
 
                     st.write(
-                        f"**Identified Symptom Node(s):** "
+                        "**Identified Symptom Node(s):** "
                         f"`{', '.join(symptoms).title()}`"
                     )
 
@@ -481,25 +483,18 @@ with col1:
 
                 if treatments:
 
-                    t_html = "".join(
+                    treatment_text = "<br>".join(
                         [
-                            f"<li style='margin-bottom: 7px;'>{t}</li>"
-                            for t in treatments
+                            f"• {item}"
+                            for item in treatments
                         ]
                     )
 
                     st.markdown(
                         f"""
                         <div class="box-treatment">
-
-                            <div class="box-title">
-                                🟢 क्या करें / क्या मदद मिल सकती है
-                            </div>
-
-                            <ul style="margin-bottom: 0;">
-                                {t_html}
-                            </ul>
-
+                        <strong>🟢 क्या करें / What To Do</strong><br><br>
+                        {treatment_text}
                         </div>
                         """,
                         unsafe_allow_html=True
@@ -507,30 +502,23 @@ with col1:
 
 
                 # =================================================
-                # 🔴 WHAT NOT TO DO
+                # 🚫 WHAT NOT TO DO
                 # =================================================
 
                 if precautions:
 
-                    p_html = "".join(
+                    precaution_text = "<br>".join(
                         [
-                            f"<li style='margin-bottom: 7px;'>{p}</li>"
-                            for p in precautions
+                            f"• {item}"
+                            for item in precautions
                         ]
                     )
 
                     st.markdown(
                         f"""
                         <div class="box-avoid">
-
-                            <div class="box-title">
-                                🚫 क्या न करें / What To Avoid
-                            </div>
-
-                            <ul style="margin-bottom: 0;">
-                                {p_html}
-                            </ul>
-
+                        <strong>🚫 क्या न करें / What To Avoid</strong><br><br>
+                        {precaution_text}
                         </div>
                         """,
                         unsafe_allow_html=True
@@ -538,30 +526,23 @@ with col1:
 
 
                 # =================================================
-                # 🔵 DIETARY ADVICE
+                # 🥗 DIET
                 # =================================================
 
                 if diets:
 
-                    d_html = "".join(
+                    diet_text = "<br>".join(
                         [
-                            f"<li style='margin-bottom: 7px;'>{d}</li>"
-                            for d in diets
+                            f"• {item}"
+                            for item in diets
                         ]
                     )
 
                     st.markdown(
                         f"""
                         <div class="box-diet">
-
-                            <div class="box-title">
-                                🥗 खान-पान की सलाह / Dietary Advice
-                            </div>
-
-                            <ul style="margin-bottom: 0;">
-                                {d_html}
-                            </ul>
-
+                        <strong>🥗 खान-पान की सलाह / Dietary Advice</strong><br><br>
+                        {diet_text}
                         </div>
                         """,
                         unsafe_allow_html=True
@@ -569,45 +550,38 @@ with col1:
 
 
                 # =================================================
-                # ⚠️ WHEN TO SEEK MEDICAL HELP
+                # ⚠️ DOCTOR NOTE
                 # =================================================
 
                 st.markdown(
                     """
                     <div class="box-doctor">
-
-                        <div class="box-title">
-                            ⚠️ कब डॉक्टर से संपर्क करें?
-                        </div>
-
-                        <div>
-                            अगर लक्षण बहुत गंभीर हों, तेजी से बिगड़ रहे हों,
-                            लगातार बने रहें, या आपको अपनी स्थिति को लेकर चिंता हो,
-                            तो qualified doctor/health professional से medical evaluation लें।
-                        </div>
-
+                    <strong>⚠️ कब डॉक्टर से संपर्क करें?</strong><br><br>
+                    अगर लक्षण बहुत गंभीर हों, तेजी से बिगड़ रहे हों,
+                    लगातार बने रहें, या आपको अपनी स्थिति को लेकर चिंता हो,
+                    तो qualified doctor/health professional से medical evaluation लें।
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
 
 
-            # -------------------------------------------------
-            # NO DISEASE FOUND
-            # -------------------------------------------------
+            # =================================================
+            # NO MATCH
+            # =================================================
 
             else:
 
                 st.error(
                     "❌ कोई बीमारी मैच नहीं हुई। "
-                    "कृपया लक्षण (जैसे: "
+                    "कृपया लक्षण जैसे "
                     "`stomach pain`, `headache`, `fever`, "
-                    "`acidity`, `vomiting`) जाँचकर दोबारा टाइप करें।"
+                    "`acidity`, `vomiting` आदि जाँचकर दोबारा टाइप करें।"
                 )
 
 
             # -------------------------------------------------
-            # MEDICAL DISCLAIMER
+            # DISCLAIMER
             # -------------------------------------------------
 
             st.warning(
@@ -619,7 +593,7 @@ with col1:
 
 
 # =============================================================
-# RIGHT COLUMN - VISUAL GRAPH
+# RIGHT COLUMN
 # =============================================================
 
 with col2:
@@ -641,7 +615,7 @@ with col2:
 
 
     # ---------------------------------------------------------
-    # Draw Edges
+    # EDGES
     # ---------------------------------------------------------
 
     nx.draw_networkx_edges(
@@ -656,7 +630,7 @@ with col2:
 
 
     # ---------------------------------------------------------
-    # Draw Nodes
+    # NODES
     # ---------------------------------------------------------
 
     nx.draw_networkx_nodes(
@@ -670,7 +644,7 @@ with col2:
 
 
     # ---------------------------------------------------------
-    # Labels
+    # LABELS
     # ---------------------------------------------------------
 
     labels = {
